@@ -55,7 +55,7 @@ const kusBotCommandNotFoundHandler = async (contex: MessageContext) => {
 }
 
 const changeNameHandler = async (context: MessageContext) => {
-    const match = context.text && /я ([а-яА-Я0-9_]+)/gm.exec(context.text)
+    const match = context.text && /я|Я ([а-яА-Я0-9_]+)/gm.exec(context.text)
 
     if (match && match[1].length <= 20) {
         const result = await commandsService.updateUserNameInfo(context.senderId, context.peerId, match[1])
@@ -70,7 +70,7 @@ const changeNameHandler = async (context: MessageContext) => {
 const index = (hearManager: HearManager<Context>) => {
     hearManager.hear((val: string | undefined): boolean => val !== undefined && /хуй/g.test(val.toLowerCase()), huiHandler)
     hearManager.hear((value: string | undefined): boolean => value !== undefined && /секс/.test(value.toLowerCase()), sexHandler)
-    hearManager.hear((value: string | undefined): boolean => value !== undefined && /я ([а-яА-Я]{1,20})/gm.test(value.toLowerCase()), changeNameHandler)
+    hearManager.hear((value: string | undefined): boolean => value !== undefined && /я|Я ([а-яА-Я0-9_]+)/gm.test(value.toLowerCase()), changeNameHandler)
 
     hearManager.hear(
         (_, context: MessageContext): boolean => context?.attachments[0]?.constructor.name === 'AudioMessageAttachment' && Math.random() > 0.5,
