@@ -8,6 +8,7 @@
     "start": "ts-node --project tsconfig.json ./src/app.ts",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
+    "prod": "node ./dist/src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
