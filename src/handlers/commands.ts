@@ -10,7 +10,7 @@ const startHandler = async (context: Context) => {
     await context.send('Привет')
 }
 
-const banWords: string[] = ['бан', 'ну это бан', 'бан тебе', '👎', 'осуждаю', 'это бан']
+const banWords: RegExp[] = [/бан/g, /👎/g, /осуждаю/g]
 const banResponses: string[] = ['Поддерживаю', 'Туда его', 'Так ему и надо']
 const banHandler = async (context: MessageContext) => {
     const [type, result] = new IdsValidator(
@@ -33,7 +33,7 @@ const banHandler = async (context: MessageContext) => {
     else await context.send('У моего раба, который меня создал, беды с башкой, поэтому не помню, как мне на это реагировать')
 }
 
-const respectWords: string[] = ['+rep', 'респект', 'реп+', 'красава', 'красавчик', '👍']
+const respectWords: RegExp[] = [/респект/g, /красава/g, /красавчик/g, /👍/g, /увлажнение/g]
 const respectResponses: string[] = ['Ну вы посмотриет на этого красавца', 'Мое уважение, уважаемый', 'Мое увлажнение', 'Не, ну вы псомотрите на него']
 const respectHandler = async (context: MessageContext) => {
     const [type, result] = new IdsValidator(
@@ -65,7 +65,7 @@ const index = (hearManager: HearManager<Context>): void => {
             value: string | undefined,
             context: Context
         ): boolean => {
-            if (value && banWords.includes(value.toLowerCase())) return true
+            if (value && banWords.map(el => el.test(value.toLowerCase())).filter(el => el).length > 0) return true
             else return false
         },
         banHandler
@@ -75,7 +75,7 @@ const index = (hearManager: HearManager<Context>): void => {
             value: string | undefined,
             context: Context
         ): boolean => {
-            if (value && respectWords.includes(value.toLowerCase())) return true
+            if (value && respectWords.map(el => el.test(value.toLowerCase())).filter(el => el).length > 0) return true
             return false
         },
         respectHandler

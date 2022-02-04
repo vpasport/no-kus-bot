@@ -65,7 +65,9 @@ const index = (hearManager: HearManager<Context>) => {
     hearManager.hear((val: string | undefined): boolean => val !== undefined && /стрела/g.test(val.toLowerCase()), ArrowHandler)
     hearManager.hear((val: string | undefined): boolean => val !== undefined && /пиздец/g.test(val.toLowerCase()), fuckHandler)
     hearManager.hear((val: string | undefined) => val !== undefined && /жопа/g.test(val.toLowerCase()) && Math.random() < 0.6, assHandler)
-    hearManager.hear((val: string | undefined, context: MessageContext) => context.senderId === -192337472 && val !== undefined && /хоч/g.test(val.toLowerCase()), wishHandler)
+    hearManager.hear((val: string | undefined, context: MessageContext) =>
+        context.senderId === -192337472 && val !== undefined && (/хоч/g.test(val.toLowerCase()) || /хот/g.test(val.toLowerCase()))
+        , wishHandler)
     hearManager.hear((_, context: MessageContext) => context.senderId === -192337472 && Math.random() < 0.3, kusBotHandler)
     // hearManager.hear((_, context: MessageContext) => (console.log(context), true), () => { })
 }
