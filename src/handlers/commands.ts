@@ -10,6 +10,13 @@ const startHandler = async (context: Context) => {
     await context.send('Привет')
 }
 
+const getStatHandler = async (context: MessageContext) => {
+    const result = await commandsService.getStats(context.peerId)
+
+    await context.send(result)
+    await context.send({ sticker_id: 51664 })
+}
+
 const banWords: RegExp[] = [/бан/g, /👎/g, /осуждаю/g]
 const banResponses: string[] = ['Поддерживаю', 'Туда его', 'Так ему и надо']
 const banHandler = async (context: MessageContext) => {
@@ -65,6 +72,7 @@ const respectHandler = async (context: MessageContext) => {
 
 const index = (hearManager: HearManager<Context>): void => {
     hearManager.hear('/start', startHandler)
+    hearManager.hear('/stats', getStatHandler)
 
     hearManager.hear(
         (

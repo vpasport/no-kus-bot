@@ -40,3 +40,5 @@ vk.updates.on('chat_kick_user', async (context: Context) => {
 vk.updates.start()
     .then(() => console.log('Bot started'))
     .catch(console.error)
+
+export { vk }
