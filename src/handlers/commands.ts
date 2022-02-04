@@ -29,7 +29,10 @@ const banHandler = async (context: MessageContext) => {
         const newBansCount = await commandsService.addBans(context.peerId, context.replyMessage.senderId)
         if (newBansCount && typeof result === 'function') await context.send((() => result(`${newBansCount}`))())
     }
-    else if (typeof result === 'string') await context.send(result)
+    else if (typeof result === 'string') {
+        if (type === IdsValidator.ResultTypes.noReply) await context.reply(result)
+        else await context.send(result)
+    }
     else await context.send('У моего раба, который меня создал, беды с башкой, поэтому не помню, как мне на это реагировать')
 }
 
@@ -53,7 +56,10 @@ const respectHandler = async (context: MessageContext) => {
         const newRespectCount = await commandsService.addRespect(context.peerId, context.replyMessage.senderId)
         if (newRespectCount && typeof result === 'function') await context.send((() => result(`${newRespectCount}`))())
     }
-    else if (typeof result === 'string') await context.send(result)
+    else if (typeof result === 'string') {
+        if (type === IdsValidator.ResultTypes.noReply) await context.reply(result)
+        else await context.send(result)
+    }
     else await context.send('У моего раба, который меня создал, беды с башкой, поэтому не помню, как мне на это реагировать')
 }
 
