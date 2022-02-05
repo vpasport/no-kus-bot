@@ -1,4 +1,4 @@
-import { Attachment, Context, MessageContext } from 'vk-io'
+import { Context, MessageContext } from 'vk-io'
 import { HearManager } from '@vk-io/hear'
 import { commands as commandsService } from '../services'
 
@@ -38,9 +38,7 @@ const assHandler = async (context: MessageContext) => {
 
 const wishHandler = async (context: MessageContext) => {
     await context.reply('Смотрете, клоун')
-    await context.send({
-        sticker_id: 51636
-    })
+    await context.send({ sticker_id: 51636 })
 }
 
 const fuckHandler = async (contex: MessageContext) => {
@@ -49,16 +47,14 @@ const fuckHandler = async (contex: MessageContext) => {
 
 const kusBotCommandNotFoundHandler = async (contex: MessageContext) => {
     await contex.reply('Да это не тебе, урод вонючий')
-    await contex.send({
-        sticker_id: 51671
-    })
+    await contex.send({ sticker_id: 51671 })
 }
 
 const changeNameHandler = async (context: MessageContext) => {
-    const match = context.text && /я|Я ([а-яА-Я0-9_]+)/gm.exec(context.text)
+    const match = context.text && /(я|Я)\s([а-яА-ЯёЁ_\d]{4,})\s?/mg.exec(context.text)
 
-    if (match && match[1].length <= 20) {
-        const result = await commandsService.updateUserNameInfo(context.senderId, context.peerId, match[1])
+    if (match && typeof match[2] === 'string' && match[2].length <= 20) {
+        const result = await commandsService.updateUserNameInfo(context.senderId, context.peerId, match[2].replace('_', ' ').trim())
 
         if (result) {
             context.send('Я запомнил')
@@ -68,35 +64,33 @@ const changeNameHandler = async (context: MessageContext) => {
 }
 
 const index = (hearManager: HearManager<Context>) => {
-    hearManager.hear((val: string | undefined): boolean => val !== undefined && /хуй/g.test(val.toLowerCase()), huiHandler)
-    hearManager.hear((value: string | undefined): boolean => value !== undefined && /секс/.test(value.toLowerCase()), sexHandler)
-    hearManager.hear((value: string | undefined): boolean => value !== undefined && /я|Я ([а-яА-Я0-9_]+)/gm.test(value.toLowerCase()), changeNameHandler)
+    hearManager.hear((val: string | undefined): boolean => !!val && /хуй/g.test(val.toLowerCase()) && Math.random() < 0.5, huiHandler)
+    hearManager.hear((value: string | undefined): boolean => !!value && /секс/.test(value.toLowerCase()), sexHandler)
+    hearManager.hear((value: string | undefined): boolean => !!value && /я|Я\s([а-яА-ЯёЁ_\d]{4,})\s?/gm.test(value.toLowerCase()) && Math.random() < 0.5, changeNameHandler)
+    hearManager.hear((val: string | undefined): boolean => !!val && /стрела/g.test(val.toLowerCase()), ArrowHandler)
+    hearManager.hear((val: string | undefined): boolean => !!val && /пиздец/g.test(val.toLowerCase()), fuckHandler)
+    hearManager.hear((val: string | undefined) => !!val && /жопа/g.test(val.toLowerCase()) && Math.random() < 0.6, assHandler)
 
-    hearManager.hear(
-        (_, context: MessageContext): boolean => context?.attachments[0]?.constructor.name === 'AudioMessageAttachment' && Math.random() > 0.5,
-        audioHandler
-    )
-    hearManager.hear(
-        (value: string | undefined, context: MessageContext): boolean =>
-            ((value && /youtube/g.test(value.toLowerCase())) ||
-                (context?.attachments[0]?.constructor.name === 'VideoAttachment' && context.senderId === 78038002)) &&
-            Math.random() > 0.5,
+    hearManager.hear((value: string | undefined, context: MessageContext): boolean =>
+        ((!!value && /youtube/g.test(value.toLowerCase())) ||
+            (context?.attachments[0]?.constructor.name === 'VideoAttachment' && context.senderId === 78038002)) &&
+        Math.random() > 0.5,
         MikhailVideoHandler
     )
     // hearManager.hear(
     //     (_, context: MessageContext): boolean => context?.attachments[0]?.constructor.name === 'VideoAttachment' && context.senderId === 114256649 && Math.random() > 0.5,
     //     () => { }
     // )
-    hearManager.hear((val: string | undefined): boolean => val !== undefined && /стрела/g.test(val.toLowerCase()), ArrowHandler)
-    hearManager.hear((val: string | undefined): boolean => val !== undefined && /пиздец/g.test(val.toLowerCase()), fuckHandler)
-    hearManager.hear((val: string | undefined) => val !== undefined && /жопа/g.test(val.toLowerCase()) && Math.random() < 0.6, assHandler)
     hearManager.hear((val: string | undefined, context: MessageContext) =>
-        context.senderId === -192337472 && val !== undefined && (/хоч/g.test(val.toLowerCase()) || /хот/g.test(val.toLowerCase()))
+        context.senderId === -192337472 && !!val && (/хоч/g.test(val.toLowerCase()) || /хот/g.test(val.toLowerCase()))
         , wishHandler)
     hearManager.hear((val: string | undefined, context: MessageContext) =>
-        context.senderId === -192337472 && val !== undefined && (/команда не найдена/g.test(val.toLowerCase()))
+        context.senderId === -192337472 && !!val && (/команда не найдена/g.test(val.toLowerCase()))
         , kusBotCommandNotFoundHandler)
     hearManager.hear((_, context: MessageContext) => context.senderId === -192337472 && Math.random() < 0.3, kusBotHandler)
+    hearManager.hear((_, context: MessageContext): boolean => context?.attachments[0]?.constructor.name === 'AudioMessageAttachment' && Math.random() > 0.5,
+        audioHandler
+    )
     // hearManager.hear((_, context: MessageContext) => (console.log(context), true), () => { })
 }
 

@@ -5,10 +5,10 @@ const getStats = async (chatId: number): Promise<string> => {
 
     if (result) {
         let statStr = '⚠️‼️ВНИМАНИЕ, ВНИМАНИЕ‼️⚠️👇👇👇\n❌Статистика по банам:\n'
-        result.bans.map(el => !!el.bans && (statStr += `${el.bans} - @id${el.user_id} (${el.user_name})\n`))
+        result.bans.map(el => !!el.bans && (statStr += `${el.bans} - ${el.user_id > 0 ? `@id${el.user_id} (${el.user_name})\n` : `@club${Math.abs(el.user_id)} (Какой-то левый хуй)`}`))
 
         statStr += '\n✅Статистика по респектам:\n'
-        result.respects.map(el => !!el.respects && (statStr += `${el.respects} - @id${el.user_id} (${el.user_name})\n`))
+        result.respects.map(el => !!el.respects && (statStr += `${el.respects} - ${el.user_id > 0 ? `@id${el.user_id} (${el.user_name})\n` : `@club${Math.abs(el.user_id)} (Какой-то левый хуй)`}`))
 
         statStr += `\n⚠️Общее количество:\n❌${result.bansSum} - баны\n✅${result.respectsSum} - респекты\n\nКак-то так`
         return statStr

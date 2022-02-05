@@ -4,10 +4,10 @@ import { vk } from '../app'
 const pool = getPool()
 
 interface GroupUser {
-    user_id?: number,
-    group_id?: number,
-    bans?: number,
-    respects?: number,
+    user_id: number,
+    group_id: number,
+    bans: number,
+    respects: number,
     user_name?: string
 }
 
@@ -24,8 +24,12 @@ const getStats = async (chatId: number): Promise<null | GroupStat> => {
 
     try {
         let result = await client.query(
-            `select * from group_users
-            where group_id = $1
+            `select
+                *
+            from
+                group_users
+            where
+                group_id = $1
             order by bans desc
             limit 3`,
             [chatId]
@@ -34,8 +38,12 @@ const getStats = async (chatId: number): Promise<null | GroupStat> => {
         const bans: GroupUser[] = result.rows
 
         result = await client.query(
-            `select * from group_users
-            where group_id = $1
+            `select 
+                *
+            from
+                group_users
+            where
+                group_id = $1
             order by respects desc
             limit 3`,
             [chatId]
@@ -44,7 +52,7 @@ const getStats = async (chatId: number): Promise<null | GroupStat> => {
         const respects: GroupUser[] = result.rows
 
         let { rows: sumResult } = await client.query(
-            `select 
+            `select
                 group_id, sum(respects)::int as respects, sum(bans)::int as bans
             from
                 group_users
